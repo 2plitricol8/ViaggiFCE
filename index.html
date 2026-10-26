@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f141d">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Viaggi FCE">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>Viaggi FCE</title>
+<style>
+  :root{
+    color-scheme:dark;
+    --bg:#0f141d;        /* sfondo pagina */
+    --panel:#181e2b;     /* pannello principale */
+    --field:#10151f;     /* campi input */
+    --tile:#1d2a45;     /* riquadri */
+    --line:#2a3345;
+    --text:#f2f5fa;
+    --muted:#8a96ab;
+    --accent:#5b9bff;    /* azzurro pulsanti */
+    --accent-d:#3f7de0;
+    --amber:#e8a838;
+    --red:#ff5a5f;
+    --green:#4cc38a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;min-height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);
+    padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));
+    display:flex;justify-content:center;
+  }
+  .panel{
+    width:100%;max-width:480px;background:var(--panel);border-radius:22px;
+    padding:24px 22px 18px;box-shadow:0 8px 30px rgba(0,0,0,.45);
+    border:1px solid #1f2735;
+  }
+  h1{margin:0;font-size:27px;font-weight:700}
+  .sub{color:var(--muted);font-size:15px;margin:6px 0 20px}
+  .sec{font-size:13px;font-weight:700;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;margin:6px 0 10px}
+
+  .tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--field);padding:5px;border-radius:14px;border:1px solid var(--line)}
+  .tabs button{
+    flex:1;border:none;background:none;color:var(--muted);font-size:16px;font-weight:600;
+    padding:11px 0;border-radius:10px;
+  }
+  .tabs button.active{background:var(--tile);color:var(--accent)}
+
+  .tab{display:none}.tab.active{display:block}
+  .row{display:flex;gap:12px}
+  .field{flex:1;display:flex;flex-direction:column;gap:7px}
+  label{font-size:15px;color:#c3cbda}
+  input[type=date],input[type=time]{
+    font:inherit;font-size:21px;padding:0 14px;height:58px;border:1px solid var(--line);
+    border-radius:12px;background:var(--field);color:var(--text);width:100%;
+    color-scheme:dark;
+  }
+  input:focus{outline:none;border-color:var(--accent)}
+  .link{margin-top:14px;background:none;border:none;color:var(--accent);font-size:15px;font-weight:600;padding:6px 0}
+
+  .bigwrap{display:flex;flex-direction:column;align-items:center;padding:26px 0 6px}
+  #bigBtn{
+    width:min(66vw,260px);height:min(66vw,260px);border-radius:50%;border:none;
+    background:radial-gradient(circle at 35% 30%,#86b6ff,var(--accent) 55%,var(--accent-d));
+    color:#0b1424;font-size:25px;font-weight:800;line-height:1.2;padding:20px;
+    box-shadow:0 10px 30px rgba(91,155,255,.35),inset 0 -6px 12px rgba(0,0,0,.18);
+    transition:transform .08s, box-shadow .08s;
+  }
+  #bigBtn:active{transform:scale(.95);box-shadow:0 4px 12px rgba(91,155,255,.3),inset 0 -3px 8px rgba(0,0,0,.25)}
+  #bigBtn small{display:block;font-size:16px;font-weight:600;opacity:.75;margin-top:6px}
+  #status{min-height:46px;margin-top:20px;text-align:center;font-size:17px;font-weight:700;color:var(--amber)}
+  #counter{text-align:center;color:var(--muted);font-size:14px;padding-bottom:6px}
+
+  .tiles{display:flex;gap:12px;margin-bottom:18px}
+  .tile{flex:1;background:var(--tile);border-radius:14px;padding:14px 16px}
+  .tile .k{font-size:12.5px;letter-spacing:.4px;color:#a9b6cf;text-transform:uppercase}
+  .tile .v{font-size:32px;font-weight:700;margin-top:4px}
+
+  .logtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .logtop .sec{margin:0}
+  .btn-sec{background:var(--field);border:1px solid var(--line);color:var(--accent);border-radius:10px;padding:9px 14px;font-size:15px;font-weight:600}
+  .entry{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .entry:last-child{border-bottom:none}
+  .idx{min-width:42px;height:42px;border-radius:12px;background:var(--tile);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+  .txt{flex:1;line-height:1.3}
+  .txt b{display:block;font-size:17px}
+  .txt span{color:var(--muted);font-size:14px}
+  .del{background:none;border:1px solid #5a2a30;color:var(--red);border-radius:10px;padding:9px 12px;font-size:15px;font-weight:600}
+  .empty{text-align:center;color:var(--muted);padding:34px 0}
+
+  .modal{position:fixed;inset:0;background:rgba(5,8,14,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+  .modal.show{display:flex}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;max-width:360px;width:100%}
+  .box h3{margin:0 0 8px;font-size:20px}
+  .box p{margin:0 0 18px;color:#b3bdd0;font-size:16px;line-height:1.4}
+  .box .btns{display:flex;gap:10px}
+  .box .btns button{flex:1;padding:14px;border-radius:12px;font-size:16px;font-weight:600;border:none}
+  .b-cancel{background:var(--field);color:var(--accent);border:1px solid var(--line)!important}
+  .b-ok{background:var(--red);color:#fff}
+  .foot{text-align:center;color:var(--muted);font-size:13px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>Viaggi FCE</h1>
+  <div class="sub">INFN-LNS · Registro viaggi</div>
+
+  <div class="tabs">
+    <button id="nav-reg" class="active">Registra</button>
+    <button id="nav-log">Log</button>
+  </div>
+
+  <section id="tab-reg" class="tab active">
+    <div class="sec">Data e ora</div>
+    <div class="row">
+      <div class="field"><label for="d">Data</label><input type="date" id="d"></div>
+      <div class="field"><label for="t">Ora</label><input type="time" id="t"></div>
+    </div>
+    <button class="link" id="nowBtn">↻ Imposta data/ora attuali</button>
+
+    <div class="bigwrap">
+      <button id="bigBtn">VIAGGIO FCE<small>effettuato</small></button>
+      <div id="status"></div>
+      <div id="counter"></div>
+    </div>
+  </section>
+
+  <section id="tab-log" class="tab">
+    <div class="tiles">
+      <div class="tile"><div class="k">Viaggi totali</div><div class="v" id="tTot">0</div></div>
+      <div class="tile"><div class="k">Ultimo</div><div class="v" id="tLast" style="font-size:22px;padding-top:6px">—</div></div>
+    </div>
+    <div class="logtop">
+      <div class="sec">Registro</div>
+      <button class="btn-sec" id="exportBtn">Esporta CSV</button>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <div class="foot">Log salvato su questo dispositivo</div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3 id="mTitle"></h3>
+    <p id="mText"></p>
+    <div class="btns">
+      <button class="b-cancel" id="mCancel">Annulla</button>
+      <button class="b-ok" id="mOk">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const KEY='viaggioFCE.log', CNT='viaggioFCE.counter';
+  const $=id=>document.getElementById(id);
+  const pad=n=>String(n).padStart(2,'0');
+
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||[] }catch(e){ return [] } }
+  function save(a){ try{ localStorage.setItem(KEY,JSON.stringify(a)) }catch(e){} }
+  function nextIndex(){
+    let c=0; try{ c=parseInt(localStorage.getItem(CNT)||'0',10)||0 }catch(e){}
+    const max=load().reduce((m,r)=>Math.max(m,r.n),0);
+    c=Math.max(c,max)+1;
+    try{ localStorage.setItem(CNT,String(c)) }catch(e){}
+    return c;
+  }
+  function fmtDate(iso){ const [y,m,d]=iso.split('-'); return d+'/'+m+'/'+y }
+
+  function setNow(){
+    const n=new Date();
+    $('d').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate());
+    $('t').value=pad(n.getHours())+':'+pad(n.getMinutes());
+  }
+  setNow();
+  $('nowBtn').onclick=()=>{ touched=false; setNow(); };
+
+  let touched=false;
+  ['d','t'].forEach(i=>$(i).addEventListener('input',()=>touched=true));
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden && !touched) setNow(); });
+
+  function updCounter(){
+    const n=load().length;
+    $('counter').textContent = n ? ('Viaggi registrati: '+n) : 'Nessun viaggio registrato';
+  }
+
+  let stTimer;
+  $('bigBtn').onclick=()=>{
+    if(!$('d').value||!$('t').value){
+      $('status').style.color='var(--red)';
+      $('status').textContent='Inserisci data e ora';
+      return;
+    }
+    const row={n:nextIndex(),date:$('d').value,time:$('t').value,text:'viaggio FCE effettuato'};
+    const a=load(); a.push(row); save(a);
+    if(navigator.vibrate) navigator.vibrate(60);
+    $('status').style.color='var(--amber)';
+    $('status').textContent='✔ Registrato n. '+row.n+' — '+fmtDate(row.date)+' '+row.time;
+    clearTimeout(stTimer); stTimer=setTimeout(()=>$('status').textContent='',5000);
+    touched=false; setNow();
+    updCounter(); render();
+  };
+
+  function render(){
+    const all=load();
+    $('tTot').textContent=all.length;
+    const last=all.slice().sort((x,y)=>y.n-x.n)[0];
+    $('tLast').textContent=last?(fmtDate(last.date)+' '+last.time):'—';
+
+    const a=all.slice().sort((x,y)=>y.n-x.n);
+    const L=$('list');
+    if(!a.length){ L.innerHTML='<div class="empty">Nessuna riga nel log</div>'; return; }
+    L.innerHTML='';
+    a.forEach(r=>{
+      const e=document.createElement('div'); e.className='entry';
+      e.innerHTML='<div class="idx">'+r.n+'</div>'+
+        '<div class="txt"><b>'+fmtDate(r.date)+' '+r.time+'</b><span>'+r.text+'</span></div>';
+      const b=document.createElement('button'); b.className='del'; b.textContent='Elimina';
+      b.onclick=()=>askDelete(r);
+      e.appendChild(b); L.appendChild(e);
+    });
+  }
+
+  let pending=null, step=0;
+  function askDelete(r){
+    pending=r; step=1;
+    $('mTitle').textContent='Eliminare la riga?';
+    $('mText').textContent='Riga n. '+r.n+' — '+fmtDate(r.date)+' '+r.time+'. Sei sicuro?';
+    $('mOk').textContent='Sì, continua';
+    $('modal').classList.add('show');
+  }
+  $('mCancel').onclick=()=>{ $('modal').classList.remove('show'); pending=null; step=0; };
+  $('mOk').onclick=()=>{
+    if(step===1){
+      step=2;
+      $('mTitle').textContent='Conferma definitiva';
+      $('mText').textContent='Questa operazione non si può annullare. Eliminare davvero la riga n. '+pending.n+'?';
+      $('mOk').textContent='Elimina definitivamente';
+    } else if(step===2){
+      save(load().filter(x=>x.n!==pending.n));
+      $('modal').classList.remove('show'); pending=null; step=0;
+      updCounter(); render();
+    }
+  };
+
+  $('exportBtn').onclick=()=>{
+    const a=load().sort((x,y)=>x.n-y.n);
+    if(!a.length) return;
+    const csv='indice;data;ora;descrizione\n'+a.map(r=>[r.n,fmtDate(r.date),r.time,r.text].join(';')).join('\n');
+    const url=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));
+    const l=document.createElement('a'); l.href=url; l.download='viaggi_FCE.csv';
+    document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+
+  function show(t){
+    $('tab-reg').classList.toggle('active',t==='reg');
+    $('tab-log').classList.toggle('active',t==='log');
+    $('nav-reg').classList.toggle('active',t==='reg');
+    $('nav-log').classList.toggle('active',t==='log');
+    if(t==='log') render();
+  }
+  $('nav-reg').onclick=()=>show('reg');
+  $('nav-log').onclick=()=>show('log');
+
+  updCounter(); render();
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+})();
+</script>
+</body>
+</html>
