@@ -93,6 +93,7 @@
   .txt b{display:block;font-size:17px}
   .txt span{color:var(--muted);font-size:14px}
   .del{background:none;border:1px solid #5a2a30;color:var(--red);border-radius:10px;padding:9px 12px;font-size:15px;font-weight:600}
+  .btn-reset{width:100%;margin-top:18px;background:none;border:1px solid #5a2a30;color:var(--red);border-radius:12px;padding:14px;font-size:16px;font-weight:600}
   .empty{text-align:center;color:var(--muted);padding:34px 0}
 
   .modal{position:fixed;inset:0;background:rgba(5,8,14,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
@@ -142,6 +143,7 @@
       <button class="btn-sec" id="exportBtn">Esporta CSV</button>
     </div>
     <div id="list"></div>
+    <button class="btn-reset" id="resetBtn">Reinizializza indice</button>
   </section>
 
   <div class="foot">Log salvato su questo dispositivo</div>
@@ -229,9 +231,20 @@
     });
   }
 
-  let pending=null, step=0;
+  let pending=null, step=0, mode='del';
+  function askReset(){
+    mode='reset'; step=1;
+    const n=load().length;
+    $('mTitle').textContent='Reinizializzare l’indice?';
+    $('mText').textContent= n
+      ? 'Le '+n+' righe esistenti verranno rinumerate da 1 a '+n+' in ordine cronologico e la prossima registrazione sarà la n. '+(n+1)+'. Sei sicuro?'
+      : 'Il log è vuoto: la prossima registrazione ripartirà dal n. 1. Sei sicuro?';
+    $('mOk').textContent='Sì, continua';
+    $('modal').classList.add('show');
+  }
+  $('resetBtn').onclick=askReset;
   function askDelete(r){
-    pending=r; step=1;
+    mode='del'; pending=r; step=1;
     $('mTitle').textContent='Eliminare la riga?';
     $('mText').textContent='Riga n. '+r.n+' — '+fmtDate(r.date)+' '+r.time+'. Sei sicuro?';
     $('mOk').textContent='Sì, continua';
@@ -242,10 +255,19 @@
     if(step===1){
       step=2;
       $('mTitle').textContent='Conferma definitiva';
-      $('mText').textContent='Questa operazione non si può annullare. Eliminare davvero la riga n. '+pending.n+'?';
-      $('mOk').textContent='Elimina definitivamente';
+      $('mText').textContent = mode==='reset'
+        ? 'Questa operazione non si può annullare. Reinizializzare davvero l’indice?'
+        : 'Questa operazione non si può annullare. Eliminare davvero la riga n. '+pending.n+'?';
+      $('mOk').textContent = mode==='reset' ? 'Reinizializza definitivamente' : 'Elimina definitivamente';
     } else if(step===2){
-      save(load().filter(x=>x.n!==pending.n));
+      if(mode==='reset'){
+        const a=load().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time)||x.n-y.n);
+        a.forEach((r,i)=>r.n=i+1);
+        save(a);
+        try{ localStorage.setItem(CNT,String(a.length)) }catch(e){}
+      } else {
+        save(load().filter(x=>x.n!==pending.n));
+      }
       $('modal').classList.remove('show'); pending=null; step=0;
       updCounter(); render();
     }

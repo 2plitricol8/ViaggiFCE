@@ -1,6 +1,6 @@
 {
-  "name": "Viaggio FCE",
-  "short_name": "Viaggio FCE",
+  "name": "Viaggi FCE",
+  "short_name": "Viaggi FCE",
   "description": "Registro dei viaggi FCE effettuati",
   "start_url": "./index.html",
   "scope": "./",
